@@ -1,0 +1,19 @@
+package templates
+
+import "github.com/Leo-Mart/goth-test/internal/models"
+
+templ CharacterDetails(character models.BlizzardCharacter) {
+
+<section>
+  <div>
+    <h2 class="text-2xl text-gray-900 dark:text-white">{character.CharacterProfile.Name}</h2>
+    <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
+    <ul>
+      <li>Race: {character.CharacterProfile.Race.Name}</li>
+      <li>Class: {character.CharacterProfile.Class.Name}</li>
+      <li>Spec: {character.CharacterProfile.Spec.Name}</li>
+    </ul>
+  </div>
+  // TODO: add more details
+</section>
+}

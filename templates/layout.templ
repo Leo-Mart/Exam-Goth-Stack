@@ -1,0 +1,126 @@
+package templates
+
+templ header(title string) {
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, inital-scale=1.0" />
+  <title>{ title }</title>
+  <script src="static/script/htmx.min.js"></script>
+  <link rel="stylesheet" href="static/css/style.css" />
+</head>
+}
+
+templ footer() {
+<footer class="bg-white dark:bg-gray-900">
+  <div class="mx-auto max-w-screen-xl px-4 pb-6 pt-16 sm:px-6 lg:px-8 lg:pt-24">
+    <div class="mt-12 border-t border-gray-100 pt-6 dark:border-gray-800">
+      <div class="text-center sm:flex sm:justify-between sm:text-left">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          <span class="block sm:inline">All rights reserved.</span>
+          <a class="inline-block text-orange-600 underline transition hover:text-orange-600/75 dark:text-orange-500 dark:hover:text-orange-500/75"
+            href="#">
+            Terms & Conditions
+          </a>
+          <span>&middot;</span>
+          <a class="inline-block text-orange-600 underline transition hover:text-orange-600/75 dark:text-orange-500 dark:hover:text-orange-500/75"
+            href="#">
+            Privacy Policy
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+}
+
+
+templ nav(activeLink string) {
+<header class="bg-white dark:bg-gray-900 shadow">
+  <div class="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-1 items-center justify-end md:justify-between">
+      <nav aria-label="Global" class="hidden md:block">
+        <ul class="flex items-center gap-6 text-sm">
+          <li>
+            if activeLink == "/" {
+            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-orange-600 transition" href="/">
+              Home
+            </a>
+            } else {
+            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-700 dark:hover:bg-orange-500 dark:hover:text-white"
+              href="/">
+              Home
+            </a>
+            }
+          </li>
+          <li>
+            if activeLink == "/import" {
+            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-orange-600 transition" href="/">
+              Import new character
+            </a>
+            } else {
+            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-700 dark:hover:bg-orange-500 dark:hover:text-white"
+              href="/import">
+              Import new character
+            </a>
+            }
+          </li>
+          <li>
+            if activeLink == "/characters" {
+            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-orange-600 transition" href="/">
+              Imported Characters
+            </a>
+            } else {
+            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-700 dark:hover:bg-orange-500 dark:hover:text-white"
+              href="/characters">
+              Imported Characters
+            </a>
+            }
+          </li>
+          <li>
+
+            if activeLink == "/about" {
+            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-orange-600 transition" href="/">
+              About
+            </a>
+            } else {
+            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-700 dark:hover:bg-orange-500 dark:hover:text-white"
+              href="/about">
+              About
+            </a>
+            }
+          </li>
+
+        </ul>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <button
+          class="block rounded bg-gray-100 p-2.5 text-gray-600 transition hover:text-gray-600/75 md:hidden dark:bg-gray-800 dark:text-white dark:hover:text-white/75">
+          <span class="sr-only">Toggle menu</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+}
+
+templ Layout(contents templ.Component, title string, activeLink string) {
+<!DOCTYPE HTML>
+<html>
+@header(title)
+
+<body class="flex flex-col h-full bg-slate-900 min-h-screen">
+  @nav(activeLink)
+  <main class="flex-1 container flex-grow">
+    @contents
+  </main>
+  @footer()
+</body>
+
+</html>
+}

@@ -1,0 +1,14 @@
+package templates
+
+import "github.com/Leo-Mart/goth-test/internal/models"
+
+
+templ CharacterList(characters []models.BlizzardCharacter) {
+
+// import character card and loop over all the characters and present each in a card
+<ul>
+  for _, character:= range characters {
+  <li>@CharacterCard(character)</li>
+  }
+</ul>
+}

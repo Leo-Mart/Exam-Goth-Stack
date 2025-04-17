@@ -1,0 +1,26 @@
+package templates
+
+import (
+"github.com/Leo-Mart/goth-test/internal/models"
+"fmt"
+)
+
+templ CharacterCard(character models.BlizzardCharacter) {
+// a card that takes a characters and shows some basic info, will also act as a link to get to a detail page.
+<article class="card w-48 bg-slate-700 shadow-lg border-2 rounded-md border-gray-500 mt-10">
+  // <a hx-get={ string(templ.URL(fmt.Sprintf("/character/%s", character.Name))) }>
+    <a href={ templ.URL(fmt.Sprintf("/%s", character.CharacterProfile.Name)) }>
+      <div class="card-body p-4">
+        <img class="self-center" alt="character portrait" src= />
+        <h2 class="card-title self-center">{character.CharacterProfile.Name}</h2>
+        <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
+        <ul>
+          <li>Race: {character.CharacterProfile.Name}</li>
+          <li>Class: {character.CharacterProfile.Name}</li>
+          <li>Spec: {character.CharacterProfile.Name}</li>
+        </ul>
+      </div>
+    </a>
+</article>
+
+}
