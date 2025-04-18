@@ -1,6 +1,6 @@
 package models
 
-type BlizzCharProfile struct {
+type CharacterProfile struct {
 	Name    string `json:"name"`
 	Faction struct {
 		Name string `json:"name"`
@@ -22,4 +22,7 @@ type BlizzCharProfile struct {
 	EquipmentURL struct {
 		URL string `json:"href"`
 	} `json:"equipment"`
+	MediaURL struct {
+		URL string `json:"href"`
+	} `json:"media"`
 }

@@ -18,10 +18,10 @@ import (
 )
 
 type CharacterStore interface {
-	AddCharacter(character models.BlizzardCharacter) error
-	GetCharacters() ([]models.BlizzardCharacter, error)
-	GetCharacterByID(charID string) (models.BlizzardCharacter, error)
-	GetCharacterByName(charName string) (models.BlizzardCharacter, error)
+	AddCharacter(character models.Character) error
+	GetCharacters() ([]models.Character, error)
+	GetCharacterByID(charID string) (models.Character, error)
+	GetCharacterByName(charName string) (models.Character, error)
 }
 
 type server struct {
@@ -107,7 +107,7 @@ func (s *server) importPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *server) getKeystoneProfile(charProfile models.BlizzCharProfile, accessToken string) models.KeystoneProfile {
+func (s *server) getKeystoneProfile(charProfile models.CharacterProfile, accessToken string) models.KeystoneProfile {
 	profileRequestURL := charProfile.KeystoneProfileURL.URL
 	body := strings.NewReader("")
 
@@ -142,7 +142,7 @@ func (s *server) getKeystoneProfile(charProfile models.BlizzCharProfile, accessT
 	return keystoneProfile
 }
 
-func (s *server) getGear(charProfile models.BlizzCharProfile, accessToken string) models.CharacterGear {
+func (s *server) getGear(charProfile models.CharacterProfile, accessToken string) models.CharacterGear {
 	requestURL := fmt.Sprintf("%s&locale=en_GB", charProfile.EquipmentURL.URL)
 	body := strings.NewReader("")
 
@@ -189,11 +189,13 @@ func (s *server) addCharacterHandler(w http.ResponseWriter, r *http.Request) {
 	charProfile := s.getCharacterProfile(realm, name, accessToken)
 	characterGear := s.getGear(charProfile, accessToken)
 	keystoneProfile := s.getKeystoneProfile(charProfile, accessToken)
+	characterMedia := s.getCharacterMedia(charProfile, accessToken)
 
-	var character models.BlizzardCharacter
+	var character models.Character
 	character.CharacterProfile = charProfile
 	character.KeystoneProfile = keystoneProfile
 	character.Gear = characterGear
+	character.Media = characterMedia
 	character.ID = uuid.NewString()
 
 	err := s.characterDb.AddCharacter(character)
@@ -215,14 +217,14 @@ func (s *server) addCharacterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *server) getCharacterProfile(characterRealm string, characterName string, accessToken string) models.BlizzCharProfile {
+func (s *server) getCharacterProfile(characterRealm string, characterName string, accessToken string) models.CharacterProfile {
 	requestURL := fmt.Sprintf("https://%s.api.blizzard.com/profile/wow/character/%s/%s?namespace=profile-eu&locale=en_GB", "eu", characterRealm, characterName)
 	body := strings.NewReader("")
 
 	request, err := http.NewRequest(http.MethodGet, requestURL, body)
 	if err != nil {
 		s.logger.Printf("Could not create request: %v", err)
-		return models.BlizzCharProfile{}
+		return models.CharacterProfile{}
 	}
 	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
 
@@ -230,7 +232,7 @@ func (s *server) getCharacterProfile(characterRealm string, characterName string
 	resp, err := httpClient.Do(request)
 	if err != nil {
 		s.logger.Printf("Could not make request: %v", err)
-		return models.BlizzCharProfile{}
+		return models.CharacterProfile{}
 	}
 
 	defer resp.Body.Close()
@@ -238,16 +240,50 @@ func (s *server) getCharacterProfile(characterRealm string, characterName string
 	respData, err := io.ReadAll(resp.Body)
 	if err != nil {
 		s.logger.Printf("Could not read response body: %v", err)
-		return models.BlizzCharProfile{}
+		return models.CharacterProfile{}
 	}
-	var charProfile models.BlizzCharProfile
+	var charProfile models.CharacterProfile
 	err = json.Unmarshal(respData, &charProfile)
 	if err != nil {
 		s.logger.Printf("Could not unmarshal json: %v", err)
-		return models.BlizzCharProfile{}
+		return models.CharacterProfile{}
 	}
 
 	return charProfile
+}
+
+func (s *server) getCharacterMedia(charProfile models.CharacterProfile, accessToken string) models.CharacterMedia {
+	requestURL := fmt.Sprintf("%s&locale=en_GB", charProfile.MediaURL.URL)
+	body := strings.NewReader("")
+	request, err := http.NewRequest(http.MethodGet, requestURL, body)
+	if err != nil {
+		s.logger.Printf("Could not create request :%v", err)
+		return models.CharacterMedia{}
+	}
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+
+	httpClient := new(http.Client)
+	resp, err := httpClient.Do(request)
+	if err != nil {
+		s.logger.Printf("could not make request: %v", err)
+		return models.CharacterMedia{}
+	}
+
+	defer resp.Body.Close()
+
+	respData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		s.logger.Printf("could not read response body: %v", err)
+		return models.CharacterMedia{}
+	}
+	var characterMedia models.CharacterMedia
+	err = json.Unmarshal(respData, &characterMedia)
+	if err != nil {
+		s.logger.Printf("error while unmarshalling json: %v", err)
+		return models.CharacterMedia{}
+	}
+
+	return characterMedia
 }
 
 func (s *server) getAPIToken(clientID string, clientSecret string, region string) string {
