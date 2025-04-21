@@ -1,10 +1,13 @@
 package templates
 
-import "github.com/Leo-Mart/goth-test/internal/models"
-
+import (
+"fmt"
+"github.com/Leo-Mart/goth-test/internal/models"
+)
 templ CharacterDetails(character models.Character) {
 
-<section>
+// ************PROFILE***************
+<section class="rounded-md border-2 border-gray-400">
   <div>
     <h2 class="text-2xl text-gray-900 dark:text-white">{character.CharacterProfile.Name}</h2>
     <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
@@ -15,5 +18,21 @@ templ CharacterDetails(character models.Character) {
     </ul>
   </div>
   // TODO: add more details
+</section>
+<section class="rounded-md border-2 border-gray-400">
+  <h2 class="text-2xl text-gray-900 dark:text-white">Eqipped Gear</h2>
+  <h3 class="text-1xl text-gray-900 dark:text-white">{ fmt.Sprintf( "Equipped Item level: %d",
+    character.CharacterProfile.ItemLevelEquipped)}
+  </h3>
+  <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
+  <ul>
+    for _, i := range character.Gear.EquippedItems {
+    <li>
+      {{ itemUrl := fmt.Sprintf("https://www.wowhead.com/item=%d", i.Item.ItemId)}}
+      <a href={ templ.URL(itemUrl)}></a>
+    </li>
+
+    }
+  </ul>
 </section>
 }
