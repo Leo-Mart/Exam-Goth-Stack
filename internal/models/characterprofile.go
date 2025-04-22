@@ -15,7 +15,7 @@ type CharacterProfile struct {
 		Name string `json:"name"`
 	} `json:"active_spec"`
 	Level              int `json:"level"`
-	ItemLevelEquipped  int `json:"equippped_item_level"`
+	ItemLevelEquipped  int `json:"equipped_item_level"`
 	KeystoneProfileURL struct {
 		URL string `json:"href"`
 	} `json:"mythic_keystone_profile"`
