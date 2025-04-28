@@ -1,6 +1,7 @@
-package store
+package dbstore
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -10,12 +11,14 @@ import (
 type characterStore struct {
 	logger     *log.Logger
 	characters map[string]models.Character
+	db         *sql.DB
 }
 
-func NewCharacterStore(logger *log.Logger) *characterStore {
+func NewCharacterStore(logger *log.Logger, db *sql.DB) *characterStore {
 	return &characterStore{
 		logger:     logger,
 		characters: make(map[string]models.Character),
+		db:         db,
 	}
 }
 

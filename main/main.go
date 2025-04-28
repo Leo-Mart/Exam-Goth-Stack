@@ -5,7 +5,8 @@ import (
 	"os"
 
 	"github.com/Leo-Mart/goth-test/internal/server"
-	"github.com/Leo-Mart/goth-test/internal/store"
+	"github.com/Leo-Mart/goth-test/internal/store/db"
+	"github.com/Leo-Mart/goth-test/internal/store/dbstore"
 	"github.com/joho/godotenv"
 )
 
@@ -19,7 +20,8 @@ func main() {
 		logger.Fatal("Could not load env file")
 	}
 	logger.Print("Creating character store...")
-	characterDb := store.NewCharacterStore(logger)
+	DB := db.Open()
+	characterDb := dbstore.NewCharacterStore(logger, DB)
 
 	srv, err := server.NewServer(logger, port, characterDb)
 	if err != nil {
