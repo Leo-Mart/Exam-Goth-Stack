@@ -16,4 +16,4 @@ tailwind-watch:
 
 .PHONY: dev
 dev:
-	go run ./main/main.go
+	go build -o ./tmp/main ./cmd/main.go && air

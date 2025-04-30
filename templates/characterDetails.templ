@@ -6,11 +6,9 @@ import (
 )
 templ CharacterDetails(character models.Character) {
 
-// ************PROFILE***************
 <section class="rounded-md border-2 border-gray-400">
   <div>
-    // {{ imgURL := fmt.Sprintf("%s", character.Media.Assets[0].Value) }}
-    //<img src={ templ.URL(imgURL)} />
+    <img src={ string(templ.URL(character.Media.Assets[0].Value)) } />
     <h2 class="text-2xl text-gray-900 dark:text-white">{character.CharacterProfile.Name}</h2>
     <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
     <ul>
@@ -26,14 +24,42 @@ templ CharacterDetails(character models.Character) {
     character.CharacterProfile.ItemLevelEquipped)}
   </h3>
   <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
-  <ul>
-    for _, i := range character.Gear.EquippedItems {
-    <li>
-      {{ itemUrl := fmt.Sprintf("https://www.wowhead.com/item=%d", i.Item.ItemId)}}
-      <a href={ templ.URL(itemUrl)}></a>
-    </li>
-
-    }
-  </ul>
+  <div class="relative">
+    <img class="w-full" src={ string(templ.URL(character.Media.Assets[2].Value)) } />
+    <ul class="absolute top-0 left-0 flex items-center justify-center">
+      for _, i := range character.Gear.EquippedItems {
+      <li>
+        {{ itemUrl := fmt.Sprintf("https://www.wowhead.com/item=%d", i.Item.ItemId)}}
+        <a href={ templ.URL(itemUrl)}></a>
+      </li>
+      }
+    </ul>
+  </div>
+</section>
+<section class="rounded-md border-2 border-gray-400">
+  <h2>Mythic+ Progression</h2>
+  <div>
+    <div>
+      <span>{{ fmt.Sprintf("Current rating: %d", character.KeystoneProfile.CurrentRating.Rating) }}</span>
+      <span>Totals runs: this many</span>
+      <span>Total in time: this many</span>
+      <span>Total bricked: too many</span>
+      <span>MOAR?!</span>
+    </div>
+  </div>
+  <div>
+    <h3 class="text-2xl text-gray-900 dark:text-white">Best runs for current season</h3>
+    <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
+    <ul>
+      for _, i := range character.KeystoneProfile.CurrentPeriod.BestRuns {
+      <li>
+        <span>{ fmt.Sprintf("%d", i.Duration) }</span>
+        <span>{ fmt.Sprintf("%d", i.KeystoneLevel)}</span>
+        <span>{ fmt.Sprintf("%t", i.CompletedInTime) }</span>
+        <span>{ fmt.Sprintf("%f", i.Rating.Rating) }</span>
+      </li>
+      }
+    </ul>
+  </div>
 </section>
 }

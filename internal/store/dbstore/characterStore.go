@@ -1,67 +1,69 @@
 package dbstore
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"log"
 
 	"github.com/Leo-Mart/goth-test/internal/models"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type characterStore struct {
-	logger     *log.Logger
-	characters map[string]models.Character
-	db         *sql.DB
+	logger *log.Logger
+	db     *mongo.Client
 }
 
-func NewCharacterStore(logger *log.Logger, db *sql.DB) *characterStore {
+func NewCharacterStore(logger *log.Logger, db *mongo.Client) *characterStore {
 	return &characterStore{
-		logger:     logger,
-		characters: make(map[string]models.Character),
-		db:         db,
+		logger: logger,
+		db:     db,
 	}
 }
 
 func (cs *characterStore) AddCharacter(char models.Character) error {
-	if char.ID == "" {
-		return fmt.Errorf("ID is required")
+	coll := cs.db.Database("goth-exam").Collection("characters")
+
+	inserted, err := coll.InsertOne(context.TODO(), char)
+	if err != nil {
+		return fmt.Errorf("could not insert character into db: %v", err)
 	}
 
-	if _, ok := cs.characters[char.ID]; ok {
-		return fmt.Errorf("a character with the ID: %s already exists", char.ID)
-	}
-
-	cs.characters[char.ID] = char
-	fmt.Printf("Added new character %v \n", char.CharacterProfile.Name)
+	fmt.Printf("Added new character %v \n", inserted.InsertedID)
 	return nil
 }
 
 func (cs *characterStore) GetCharacters() ([]models.Character, error) {
-	if cs.characters == nil {
-		return nil, fmt.Errorf("no characters found")
+	coll := cs.db.Database("goth-exam").Collection("characters")
+
+	query := bson.M{}
+	cursor, err := coll.Find(context.TODO(), query)
+	if err != nil {
+		return nil, fmt.Errorf("could not fetch characters: %v", err)
 	}
 
-	characters := make([]models.Character, 0, len(cs.characters))
-	for _, char := range cs.characters {
-		characters = append(characters, char)
+	results := []models.Character{}
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		return nil, fmt.Errorf("could not decode? characters: %v", err)
 	}
-	return characters, nil
+
+	return results, nil
 }
 
 func (cs *characterStore) GetCharacterByID(ID string) (models.Character, error) {
-	character := cs.characters[ID]
-	if character.ID == "" {
-		cs.logger.Printf("Could not find character with ID: %s", ID)
-		return models.Character{}, fmt.Errorf("could not find character")
-	}
-	return character, nil
+	// TODO: make this do stuff.
+	return models.Character{}, nil
 }
 
 func (cs *characterStore) GetCharacterByName(charName string) (models.Character, error) {
-	for _, val := range cs.characters {
-		if val.CharacterProfile.Name == charName {
-			return val, nil
-		}
+	var result models.Character
+
+	filter := bson.D{{"characterprofile.name", charName}}
+	coll := cs.db.Database("goth-exam").Collection("characters")
+	err := coll.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		return models.Character{}, fmt.Errorf("could not find character with name: %v", err)
 	}
-	return models.Character{}, fmt.Errorf("could not find a character with name: %s", charName)
+	return result, nil
 }

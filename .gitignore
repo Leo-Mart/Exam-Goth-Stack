@@ -3,3 +3,5 @@ tailwindcss
 tailwindcss.exe
 .vscode
 backupsnippets.go
+/tmp/*
+/tmp/

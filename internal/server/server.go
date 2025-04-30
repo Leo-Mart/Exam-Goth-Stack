@@ -14,7 +14,6 @@ import (
 
 	"github.com/Leo-Mart/goth-test/internal/models"
 	"github.com/Leo-Mart/goth-test/templates"
-	"github.com/google/uuid"
 )
 
 type CharacterStore interface {
@@ -196,7 +195,6 @@ func (s *server) addCharacterHandler(w http.ResponseWriter, r *http.Request) {
 	character.KeystoneProfile = keystoneProfile
 	character.Gear = characterGear
 	character.Media = characterMedia
-	character.ID = uuid.NewString()
 
 	err := s.characterDb.AddCharacter(character)
 	if err != nil {

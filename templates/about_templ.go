@@ -29,7 +29,7 @@ func About() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col items-center justify-center h-full space-y-4\"><h1 class=\"text-4xl font-bold text-gray-900 dark:text-white\">About</h1><p class=\"text-lg text-gray-500 dark:text-gray-400\">This is a simple web server written in Go</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col items-center justify-center min-h-screen dark:bg-gray-900 h-full space-y-4\"><h1 class=\"text-4xl font-bold text-gray-900 dark:text-white\">About</h1><p class=\"text-lg text-gray-500 dark:text-gray-400\">A simple web-app written in Go using the GoTTH Stack to keep track of various information about WoW-Characters</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

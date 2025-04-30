@@ -71,7 +71,7 @@ func footer() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<footer class=\"bg-white dark:bg-gray-900\"><div class=\"mx-auto max-w-screen-xl px-4 pb-6 pt-16 sm:px-6 lg:px-8 lg:pt-24\"><div class=\"mt-12 border-t border-gray-100 pt-6 dark:border-gray-800\"><div class=\"text-center sm:flex sm:justify-between sm:text-left\"><p class=\"text-sm text-gray-500 dark:text-gray-400\"><span class=\"block sm:inline\">All rights reserved.</span> <a class=\"inline-block text-orange-600 underline transition hover:text-orange-600/75 dark:text-orange-500 dark:hover:text-orange-500/75\" href=\"#\">Terms & Conditions</a> <span>&middot;</span> <a class=\"inline-block text-orange-600 underline transition hover:text-orange-600/75 dark:text-orange-500 dark:hover:text-orange-500/75\" href=\"#\">Privacy Policy</a></p></div></div></div></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<footer class=\"bg-white dark:bg-gray-900\"><div class=\"mx-auto max-w-screen-xl px-4 pb-6 pt-16 sm:px-6 lg:px-8 lg:pt-24\"><div class=\"mt-12 border-t border-gray-100 pt-6 dark:border-gray-800\"><div class=\"text-center sm:flex sm:justify-between sm:text-left\"><p class=\"text-sm text-gray-500 dark:text-gray-400\"><span class=\"block sm:inline\">All rights reserved.</span> <a class=\"inline-block text-emerald-600 underline transition hover:text-emerald-600/75 dark:text-emerald-500 dark:hover:text-emerald-500/75\" href=\"#\">Terms & Conditions</a> <span>&middot;</span> <a class=\"inline-block text-emerald-600 underline transition hover:text-emerald-600/75 dark:text-emerald-500 dark:hover:text-emerald-500/75\" href=\"#\">Privacy Policy</a></p></div></div></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -105,12 +105,12 @@ func nav(activeLink string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if activeLink == "/" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-orange-600 transition\" href=\"/\">Home</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition\" href=\"/\">Home</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-700 dark:hover:bg-orange-500 dark:hover:text-white\" href=\"/\">Home</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white\" href=\"/\">Home</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -120,12 +120,12 @@ func nav(activeLink string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if activeLink == "/import" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-orange-600 transition\" href=\"/\">Import new character</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition\" href=\"/\">Import new character</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-700 dark:hover:bg-orange-500 dark:hover:text-white\" href=\"/import\">Import new character</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white\" href=\"/import\">Import new character</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -135,12 +135,12 @@ func nav(activeLink string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if activeLink == "/characters" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-orange-600 transition\" href=\"/\">Imported Characters</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition\" href=\"/\">Imported Characters</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-700 dark:hover:bg-orange-500 dark:hover:text-white\" href=\"/characters\">Imported Characters</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white\" href=\"/characters\">Imported Characters</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -150,12 +150,12 @@ func nav(activeLink string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if activeLink == "/about" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-orange-600 transition\" href=\"/\">About</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition\" href=\"/\">About</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-orange-700 dark:hover:bg-orange-500 dark:hover:text-white\" href=\"/about\">About</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<a class=\"block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white\" href=\"/about\">About</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -197,7 +197,7 @@ func Layout(contents templ.Component, title string, activeLink string) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<body class=\"flex flex-col h-full bg-slate-900 min-h-screen\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<body class=\"flex flex-col h-full bg-slate-700\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -205,7 +205,7 @@ func Layout(contents templ.Component, title string, activeLink string) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<main class=\"flex-1 container flex-grow\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<main class=\"flex-1 \">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

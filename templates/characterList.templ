@@ -6,9 +6,11 @@ import "github.com/Leo-Mart/goth-test/internal/models"
 templ CharacterList(characters []models.Character) {
 
 // import character card and loop over all the characters and present each in a card
-<ul>
-  for _, character:= range characters {
-  <li>@CharacterCard(character)</li>
-  }
-</ul>
+<section class="min-h-screen dark:bg-gray-900">
+  <ul class="grid grid-cols-6 gap-3 px-8">
+    for _, character:= range characters {
+    <li>@CharacterCard(character)</li>
+    }
+  </ul>
+</section>
 }
