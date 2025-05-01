@@ -21,6 +21,7 @@ type CharacterStore interface {
 	GetCharacters() ([]models.Character, error)
 	GetCharacterByID(charID string) (models.Character, error)
 	GetCharacterByName(charName string) (models.Character, error)
+	DeleteCharacterByName(charName string) error
 }
 
 type server struct {
@@ -61,6 +62,7 @@ func (s *server) Start() error {
 	r.HandleFunc("GET /characters", s.getCharactersHandler)
 	r.HandleFunc("GET /{name}", s.getCharacterDetailsHandler)
 	r.HandleFunc("POST /character/add", s.addCharacterHandler)
+	r.HandleFunc("DELETE /delete/{name}", s.deleteCharactersHandler)
 
 	// define server
 	s.httpServer = &http.Server{
@@ -337,6 +339,17 @@ func (s *server) getCharactersHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+
+func (s *server) deleteCharactersHandler(w http.ResponseWriter, r *http.Request) {
+	characterName := r.PathValue("name")
+	err := s.characterDb.DeleteCharacterByName(characterName)
+	if err != nil {
+		s.logger.Printf("error when deleting character: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *server) getCharacterDetailsHandler(w http.ResponseWriter, r *http.Request) {

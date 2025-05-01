@@ -13,7 +13,7 @@ templ CharacterCard(character models.Character) {
       <div class="card-body p-4">
         <img class="self-center" alt="character portrait" src={character.Media.Assets[0].Value} />
         <h2 class="card-title self-center">{character.CharacterProfile.Name}</h2>
-        <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
+        <div class="divider mx-[-18px] my-0 border-color-emerald-400"></div>
         <ul>
           <li>Race: {character.CharacterProfile.Name}</li>
           <li>Class: {character.CharacterProfile.Name}</li>
@@ -21,6 +21,10 @@ templ CharacterCard(character models.Character) {
         </ul>
       </div>
     </a>
+    <button class="btn btn-error mx-1 my-1 " hx-delete={ string(templ.URL(fmt.Sprintf("/delete/%s",
+      character.CharacterProfile.Name)))} hx-confirm="Are you sure you want to delete this character?"
+      hx-swap="outerHTML swap:1s" hx-target={ fmt.Sprintf("#target-%s", character.CharacterProfile.Name) }>Delete
+      character</button>
 </article>
 
 }

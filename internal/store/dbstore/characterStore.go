@@ -37,8 +37,7 @@ func (cs *characterStore) AddCharacter(char models.Character) error {
 func (cs *characterStore) GetCharacters() ([]models.Character, error) {
 	coll := cs.db.Database("goth-exam").Collection("characters")
 
-	query := bson.M{}
-	cursor, err := coll.Find(context.TODO(), query)
+	cursor, err := coll.Find(context.TODO(), bson.M{})
 	if err != nil {
 		return nil, fmt.Errorf("could not fetch characters: %v", err)
 	}
@@ -66,4 +65,16 @@ func (cs *characterStore) GetCharacterByName(charName string) (models.Character,
 		return models.Character{}, fmt.Errorf("could not find character with name: %v", err)
 	}
 	return result, nil
+}
+
+func (cs *characterStore) DeleteCharacterByName(charName string) error {
+	filter := bson.D{{"characterprofile.name", charName}}
+
+	coll := cs.db.Database("goth-exam").Collection("characters")
+	_, err := coll.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return fmt.Errorf("error when deleting character with name: %s: %v", charName, err)
+	}
+
+	return nil
 }

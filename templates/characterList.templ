@@ -1,6 +1,9 @@
 package templates
 
-import "github.com/Leo-Mart/goth-test/internal/models"
+import (
+"fmt"
+"github.com/Leo-Mart/goth-test/internal/models"
+)
 
 
 templ CharacterList(characters []models.Character) {
@@ -9,7 +12,8 @@ templ CharacterList(characters []models.Character) {
 <section class="min-h-screen dark:bg-gray-900">
   <ul class="grid grid-cols-6 gap-3 px-8">
     for _, character:= range characters {
-    <li>@CharacterCard(character)</li>
+    <li class="delete-card" id={fmt.Sprintf("target-%s", character.CharacterProfile.Name) }>@CharacterCard(character)
+    </li>
     }
   </ul>
 </section>

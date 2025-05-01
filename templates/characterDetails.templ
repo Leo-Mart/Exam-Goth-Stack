@@ -6,60 +6,62 @@ import (
 )
 templ CharacterDetails(character models.Character) {
 
-<section class="rounded-md border-2 border-gray-400">
-  <div>
-    <img src={ string(templ.URL(character.Media.Assets[0].Value)) } />
-    <h2 class="text-2xl text-gray-900 dark:text-white">{character.CharacterProfile.Name}</h2>
-    <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
-    <ul>
-      <li>Race: {character.CharacterProfile.Race.Name}</li>
-      <li>Class: {character.CharacterProfile.Class.Name}</li>
-      <li>Spec: {character.CharacterProfile.Spec.Name}</li>
-    </ul>
-  </div>
-</section>
-<section class="rounded-md border-2 border-gray-400">
-  <h2 class="text-2xl text-gray-900 dark:text-white">Eqipped Gear</h2>
-  <h3 class="text-1xl text-gray-900 dark:text-white">{ fmt.Sprintf( "Equipped Item level: %d",
-    character.CharacterProfile.ItemLevelEquipped)}
-  </h3>
-  <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
-  <div class="relative">
-    <img class="w-full" src={ string(templ.URL(character.Media.Assets[2].Value)) } />
-    <ul class="absolute top-0 left-0 flex items-center justify-center">
-      for _, i := range character.Gear.EquippedItems {
-      <li>
-        {{ itemUrl := fmt.Sprintf("https://www.wowhead.com/item=%d", i.Item.ItemId)}}
-        <a href={ templ.URL(itemUrl)}></a>
-      </li>
-      }
-    </ul>
-  </div>
-</section>
-<section class="rounded-md border-2 border-gray-400">
-  <h2>Mythic+ Progression</h2>
-  <div>
-    <div>
-      <span>{{ fmt.Sprintf("Current rating: %d", character.KeystoneProfile.CurrentRating.Rating) }}</span>
-      <span>Totals runs: this many</span>
-      <span>Total in time: this many</span>
-      <span>Total bricked: too many</span>
-      <span>MOAR?!</span>
+<div class="grid grid-cols-6 gap-1 bg-gray-900">
+  <section class="col-span-2 rounded-md border border-emerald-700 grid grid-cols-6 p-2">
+    <div class="flex">
+      <img class="shadow-md shadow-emerald-800 mx-2" src={ string(templ.URL(character.Media.Assets[0].Value)) } />
+      <div class="mx-2">
+        <h2 class="text-2xl text-gray-900 dark:text-white">{character.CharacterProfile.Name}</h2>
+        <p class="text-base">
+          {character.CharacterProfile.Race.Name}
+          {character.CharacterProfile.Spec.Name}
+          {character.CharacterProfile.Class.Name}
+        </p>
+      </div>
     </div>
-  </div>
-  <div>
-    <h3 class="text-2xl text-gray-900 dark:text-white">Best runs for current season</h3>
-    <div class="divider mx-[-18px] my-0 border-color-gray-400"></div>
-    <ul>
-      for _, i := range character.KeystoneProfile.CurrentPeriod.BestRuns {
-      <li>
-        <span>{ fmt.Sprintf("%d", i.Duration) }</span>
-        <span>{ fmt.Sprintf("%d", i.KeystoneLevel)}</span>
-        <span>{ fmt.Sprintf("%t", i.CompletedInTime) }</span>
-        <span>{ fmt.Sprintf("%f", i.Rating.Rating) }</span>
-      </li>
-      }
-    </ul>
-  </div>
-</section>
+  </section>
+  <section class="col-span-4 row-span-4 rounded-md border border-emerald-700 p-2">
+    <h2 class="text-2xl text-gray-900 dark:text-white">Eqipped Gear</h2>
+    <h3 class="text-1xl text-gray-900 dark:text-white">{ fmt.Sprintf( "Equipped Item level: %d",
+      character.CharacterProfile.ItemLevelEquipped)}
+    </h3>
+    <div class="divider divider-accent"></div>
+    <div>
+      <ul class="grid grid-cols-2">
+        for _, i := range character.Gear.EquippedItems {
+        <li>
+          {{ itemUrl := fmt.Sprintf("https://www.wowhead.com/item=%d", i.Item.ItemId)}}
+          <a href={ templ.URL(itemUrl)}></a>
+        </li>
+        }
+      </ul>
+    </div>
+  </section>
+  <section class="col-start-1 col-span-6 rounded-md border border-emerald-700 p-2">
+    <h2>Mythic+ Progression</h2>
+    <div>
+      <div>
+        <span>{{ fmt.Sprintf("Current rating: %d", character.KeystoneProfile.CurrentRating.Rating) }}</span>
+        <span>Totals runs: this many</span>
+        <span>Total in time: this many</span>
+        <span>Total bricked: too many</span>
+        <span>MOAR?!</span>
+      </div>
+    </div>
+    <div>
+      <h3 class="text-2xl text-gray-900 dark:text-white">Best runs for current season</h3>
+      <div class="divider divider-accent"></div>
+      <ul>
+        for _, i := range character.KeystoneProfile.CurrentPeriod.BestRuns {
+        <li>
+          <span>{ fmt.Sprintf("%d", i.Duration) }</span>
+          <span>{ fmt.Sprintf("%d", i.KeystoneLevel)}</span>
+          <span>{ fmt.Sprintf("%t", i.CompletedInTime) }</span>
+          <span>{ fmt.Sprintf("%f", i.Rating.Rating) }</span>
+        </li>
+        }
+      </ul>
+    </div>
+  </section>
+</div>
 }

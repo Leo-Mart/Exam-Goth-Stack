@@ -1,3 +1,8 @@
 @import "tailwindcss";
 @source "../../templates/*.{templ,go}";
 @plugin "../../daisyui.js";
+
+.delete-card.htmx-swapping {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
