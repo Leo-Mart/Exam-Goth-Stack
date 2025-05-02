@@ -54,10 +54,20 @@ templ CharacterDetails(character models.Character) {
       <ul>
         for _, i := range character.KeystoneProfile.CurrentPeriod.BestRuns {
         <li>
-          <span>{ fmt.Sprintf("%d", i.Duration) }</span>
-          <span>{ fmt.Sprintf("%d", i.KeystoneLevel)}</span>
-          <span>{ fmt.Sprintf("%t", i.CompletedInTime) }</span>
-          <span>{ fmt.Sprintf("%f", i.Rating.Rating) }</span>
+
+          {{ seconds := (i.Duration / 1000) % 60 }}
+          {{ minutes :=i.Duration / (1000 * 60)}}
+
+          <span>{ fmt.sprintf("cleared in: %d:%d ", minutes, seconds) }</span>
+          <span>{ fmt.Sprintf("Level: +%d ", i.KeystoneLevel)}</span>
+          if i.CompletedInTime {
+
+          <span>{ fmt.Sprintf("Success!") }</span>
+          } else {
+
+          <span>{ fmt.Sprintf("failed") }</span>
+          }
+          <span>{ fmt.Sprintf("Aquired :%f points", i.Rating.Rating) }</span>
         </li>
         }
       </ul>

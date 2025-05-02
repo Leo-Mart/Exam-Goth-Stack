@@ -58,6 +58,7 @@ func (s *server) Start() error {
 	// routes
 	r.HandleFunc("GET /", s.homeHandler)
 	r.HandleFunc("GET /import", s.importPageHandler)
+	r.HandleFunc("GET /import-home", s.importHomeHandler)
 	r.HandleFunc("GET /about", s.aboutHandler)
 	r.HandleFunc("GET /characters", s.getCharactersHandler)
 	r.HandleFunc("GET /{name}", s.getCharacterDetailsHandler)
@@ -104,6 +105,14 @@ func (s *server) importPageHandler(w http.ResponseWriter, r *http.Request) {
 	err := templates.Layout(newCharTemplate, "Import new character", "/import").Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *server) importHomeHandler(w http.ResponseWriter, r *http.Request) {
+	err := templates.ImportNewCharacterFromHome().Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error rendering tempalte", http.StatusInternalServerError)
 		return
 	}
 }
@@ -181,8 +190,8 @@ func (s *server) getGear(charProfile models.CharacterProfile, accessToken string
 func (s *server) addCharacterHandler(w http.ResponseWriter, r *http.Request) {
 	clientID := os.Getenv("CLIENT_ID")
 	clientSecret := os.Getenv("CLIENT_SECRET")
-	realm := strings.ToLower(r.FormValue("realm"))
 
+	realm := strings.ToLower(r.FormValue("realm"))
 	name := strings.ToLower(r.FormValue("name"))
 
 	accessToken := s.getAPIToken(clientID, clientSecret, "eu")
@@ -203,14 +212,14 @@ func (s *server) addCharacterHandler(w http.ResponseWriter, r *http.Request) {
 		s.logger.Printf("could not add character to DB: %v", err)
 	}
 
-	characters, err := s.characterDb.GetCharacters()
+	importedChar, err := s.characterDb.GetCharacterByName(character.CharacterProfile.Name)
 	if err != nil {
 		s.logger.Printf("error while fetching characters from DB")
 		return
 	}
 
-	characterListTemplate := templates.CharacterList(characters)
-	err = characterListTemplate.Render(r.Context(), w)
+	charCardTemplate := templates.CharacterCard(importedChar)
+	err = charCardTemplate.Render(r.Context(), w)
 	if err != nil {
 		s.logger.Printf("Error when getting character-list: %v", err)
 		return

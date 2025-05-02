@@ -6,13 +6,12 @@ templ Home() {
     <div class="max-w-full text-center">
       <p class="hidden p-8 text-gray-500 md:mt-4 my-4 md:block dark:text-gray-400">
         WoW-Tracker aims to keep track of numerous stats and other interesting stuff about
-        your WoW-characters. It aims to provide absolutely nothing new among the the throng of
-        already existing WoW-resource sites.
+        your WoW-characters.
 
-        It is built mainly for learning the GoTTH Stack and uses those technologies.
+        To get started tracking stuff import your character below!
       </p>
-      <div class="mt-4 mb-8 md:mt-8 md:mb-8 ">
-        <a class="btn btn-accent btn-soft" href="/import">
+      <div class="mt-4 mb-8 md:mt-8 md:mb-8 flex justify-center justify-items-center" id="import-container">
+        <a class="btn btn-accent btn-soft" hx-get="/import-home" hx-swap="innerHTML" hx-target="#import-container">
           Import new character
         </a>
       </div>
@@ -20,7 +19,7 @@ templ Home() {
   </div>
 
   <img alt="" src="/static/img/splash.png"
-    class="h-full w-full object-cover sm:h-[calc(100%_-_2rem)] sm:self-end sm:rounded-ss-[30px] md:h-[calc(100%_-_4rem)] md:rounded-ss-[60px]"
+    class="w-full object-cover sm:h-[calc(100%_-_2rem)] sm:self-end sm:rounded-ss-[30px] md:h-[calc(100%_-_4rem)] md:rounded-ss-[60px]"
     style="width: 80%;" />
 </section>
 }
