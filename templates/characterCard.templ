@@ -3,13 +3,15 @@ package templates
 import (
 "github.com/Leo-Mart/goth-test/internal/models"
 "fmt"
+
+"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 templ CharacterCard(character models.Character) {
 // a card that takes a characters and shows some basic info, will also act as a link to get to a detail page.
 <article class="card w-48 bg-gray-900 shadow-lg border rounded-md border-emerald-700 mt-10">
   // <a hx-get={ string(templ.URL(fmt.Sprintf("/character/%s", character.Name))) }>
-    <a href={ templ.URL(fmt.Sprintf("/%s", character.CharacterProfile.Name)) }>
+    <a href={ templ.URL(fmt.Sprintf("/%s", primitive.ObjectID.Hex(character.ID))) }>
       <div class="card-body p-4">
         <img class="self-center" alt="character portrait" src={character.Media.Assets[0].Value} />
         <h2 class="card-title self-center">{character.CharacterProfile.Name}</h2>
@@ -22,8 +24,8 @@ templ CharacterCard(character models.Character) {
       </div>
     </a>
     <button class="btn btn-error mx-1 my-1 " hx-delete={ string(templ.URL(fmt.Sprintf("/delete/%s",
-      character.CharacterProfile.Name)))} hx-confirm="Are you sure you want to delete this character?"
-      hx-swap="outerHTML swap:1s" hx-target={ fmt.Sprintf("#target-%s", character.CharacterProfile.Name) }>Delete
+      primitive.ObjectID.Hex(character.ID))))} hx-confirm="Are you sure you want to delete this character?"
+      hx-swap="outerHTML swap:1s" hx-target={ fmt.Sprintf("#target-%s", primitive.ObjectID.Hex(character.ID)) }>Delete
       character</button>
 </article>
 

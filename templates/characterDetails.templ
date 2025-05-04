@@ -3,10 +3,11 @@ package templates
 import (
 "fmt"
 "github.com/Leo-Mart/goth-test/internal/models"
+"go.mongodb.org/mongo-driver/bson/primitive"
 )
 templ CharacterDetails(character models.Character) {
 
-<div class="grid grid-cols-6 gap-1 bg-gray-900">
+<div class="grid grid-cols-6 gap-1 bg-gray-900" id="character-container">
   <section class="col-span-2 rounded-md border border-emerald-700 grid grid-cols-6 p-2">
     <div class="flex">
       <img class="shadow-md shadow-emerald-800 mx-2" src={ string(templ.URL(character.Media.Assets[0].Value)) } />
@@ -18,6 +19,9 @@ templ CharacterDetails(character models.Character) {
           {character.CharacterProfile.Class.Name}
         </p>
       </div>
+      <button class="btn btn-accent" hx-put={ string(templ.URL(fmt.Sprintf("/update/%s",
+        primitive.ObjectID.Hex(character.ID))))} hx-target="#character-container" hx-swap="outerHTML">Update
+        character</button>
     </div>
   </section>
   <section class="col-span-4 row-span-4 rounded-md border border-emerald-700 p-2">
@@ -58,7 +62,7 @@ templ CharacterDetails(character models.Character) {
           {{ seconds := (i.Duration / 1000) % 60 }}
           {{ minutes :=i.Duration / (1000 * 60)}}
 
-          <span>{ fmt.sprintf("cleared in: %d:%d ", minutes, seconds) }</span>
+          <span>{ fmt.Sprintf("cleared in: %d:%d ", minutes, seconds) }</span>
           <span>{ fmt.Sprintf("Level: +%d ", i.KeystoneLevel)}</span>
           if i.CompletedInTime {
 

@@ -14,14 +14,16 @@ import (
 
 	"github.com/Leo-Mart/goth-test/internal/models"
 	"github.com/Leo-Mart/goth-test/templates"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type CharacterStore interface {
-	AddCharacter(character models.Character) error
+	AddCharacter(character models.Character) (primitive.ObjectID, error)
+	UpdateCharacter(charId primitive.ObjectID, character models.Character) error
 	GetCharacters() ([]models.Character, error)
-	GetCharacterByID(charID string) (models.Character, error)
+	GetCharacterByID(charId primitive.ObjectID) (models.Character, error)
 	GetCharacterByName(charName string) (models.Character, error)
-	DeleteCharacterByName(charName string) error
+	DeleteCharacterById(charId primitive.ObjectID) error
 }
 
 type server struct {
@@ -61,9 +63,10 @@ func (s *server) Start() error {
 	r.HandleFunc("GET /import-home", s.importHomeHandler)
 	r.HandleFunc("GET /about", s.aboutHandler)
 	r.HandleFunc("GET /characters", s.getCharactersHandler)
-	r.HandleFunc("GET /{name}", s.getCharacterDetailsHandler)
+	r.HandleFunc("GET /{id}", s.getCharacterDetailsHandler)
+	r.HandleFunc("PUT /update/{id}", s.updateCharacterHandler)
 	r.HandleFunc("POST /character/add", s.addCharacterHandler)
-	r.HandleFunc("DELETE /delete/{name}", s.deleteCharactersHandler)
+	r.HandleFunc("DELETE /delete/{id}", s.deleteCharactersHandler)
 
 	// define server
 	s.httpServer = &http.Server{
@@ -207,12 +210,12 @@ func (s *server) addCharacterHandler(w http.ResponseWriter, r *http.Request) {
 	character.Gear = characterGear
 	character.Media = characterMedia
 
-	err := s.characterDb.AddCharacter(character)
+	oid, err := s.characterDb.AddCharacter(character)
 	if err != nil {
 		s.logger.Printf("could not add character to DB: %v", err)
 	}
 
-	importedChar, err := s.characterDb.GetCharacterByName(character.CharacterProfile.Name)
+	importedChar, err := s.characterDb.GetCharacterByID(oid)
 	if err != nil {
 		s.logger.Printf("error while fetching characters from DB")
 		return
@@ -350,9 +353,66 @@ func (s *server) getCharactersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *server) updateCharacterHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		s.logger.Printf("error converting id to hex: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	oldCharacter, err := s.characterDb.GetCharacterByID(oid)
+	if err != nil {
+		s.logger.Printf("error fetching character from db: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	name := strings.ToLower(oldCharacter.CharacterProfile.Name)
+	realm := strings.ToLower("shadowsong")
+
+	clientID := os.Getenv("CLIENT_ID")
+	clientSecret := os.Getenv("CLIENT_SECRET")
+
+	accessToken := s.getAPIToken(clientID, clientSecret, "eu")
+
+	charProfile := s.getCharacterProfile(realm, name, accessToken)
+	characterGear := s.getGear(charProfile, accessToken)
+	keystoneProfile := s.getKeystoneProfile(charProfile, accessToken)
+	characterMedia := s.getCharacterMedia(charProfile, accessToken)
+
+	var character models.Character
+	character.CharacterProfile = charProfile
+	character.KeystoneProfile = keystoneProfile
+	character.Gear = characterGear
+	character.Media = characterMedia
+
+	err = s.characterDb.UpdateCharacter(oid, character)
+	if err != nil {
+		s.logger.Printf("error when updating character: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+
+	characterDetailsTemplate := templates.CharacterDetails(character)
+	err = characterDetailsTemplate.Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+	}
+}
+
 func (s *server) deleteCharactersHandler(w http.ResponseWriter, r *http.Request) {
-	characterName := r.PathValue("name")
-	err := s.characterDb.DeleteCharacterByName(characterName)
+	id := r.PathValue("id")
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		s.logger.Printf("error converting objectID: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = s.characterDb.DeleteCharacterById(oid)
 	if err != nil {
 		s.logger.Printf("error when deleting character: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -362,8 +422,14 @@ func (s *server) deleteCharactersHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (s *server) getCharacterDetailsHandler(w http.ResponseWriter, r *http.Request) {
-	characcterName := r.PathValue("name")
-	character, err := s.characterDb.GetCharacterByName(characcterName)
+	id := r.PathValue("id")
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		s.logger.Printf("error when converting id: %v", err)
+		return
+	}
+
+	character, err := s.characterDb.GetCharacterByID(oid)
 	if err != nil {
 		s.logger.Printf("error when fetching character: %v", err)
 		w.WriteHeader(http.StatusNotFound)

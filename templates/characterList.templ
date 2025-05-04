@@ -3,6 +3,7 @@ package templates
 import (
 "fmt"
 "github.com/Leo-Mart/goth-test/internal/models"
+"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 
@@ -12,7 +13,8 @@ templ CharacterList(characters []models.Character) {
 <section class="min-h-screen dark:bg-gray-900">
   <ul class="grid grid-cols-6 gap-3 px-8">
     for _, character:= range characters {
-    <li class="delete-card" id={fmt.Sprintf("target-%s", character.CharacterProfile.Name) }>@CharacterCard(character)
+    <li class="delete-card" id={fmt.Sprintf("target-%s", primitive.ObjectID.Hex(character.ID)) }>
+      @CharacterCard(character)
     </li>
     }
   </ul>

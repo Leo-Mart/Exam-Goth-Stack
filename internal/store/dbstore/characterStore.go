@@ -7,6 +7,7 @@ import (
 
 	"github.com/Leo-Mart/goth-test/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -22,15 +23,28 @@ func NewCharacterStore(logger *log.Logger, db *mongo.Client) *characterStore {
 	}
 }
 
-func (cs *characterStore) AddCharacter(char models.Character) error {
+func (cs *characterStore) AddCharacter(char models.Character) (primitive.ObjectID, error) {
 	coll := cs.db.Database("goth-exam").Collection("characters")
 
 	inserted, err := coll.InsertOne(context.TODO(), char)
 	if err != nil {
-		return fmt.Errorf("could not insert character into db: %v", err)
+		return primitive.ObjectID{}, fmt.Errorf("could not insert character into db: %v", err)
 	}
 
 	fmt.Printf("Added new character %v \n", inserted.InsertedID)
+	return inserted.InsertedID.(primitive.ObjectID), nil
+}
+
+func (cs *characterStore) UpdateCharacter(id primitive.ObjectID, character models.Character) error {
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"characterprofile": character.CharacterProfile, "keystoneprofile": character.KeystoneProfile, "gear": character.Gear, "media": character.Media}}
+
+	coll := cs.db.Database("goth-exam").Collection("characters")
+	result, err := coll.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return fmt.Errorf("could not update character: %v", err)
+	}
+	fmt.Printf("Results of put: %v", result)
 	return nil
 }
 
@@ -50,9 +64,28 @@ func (cs *characterStore) GetCharacters() ([]models.Character, error) {
 	return results, nil
 }
 
-func (cs *characterStore) GetCharacterByID(ID string) (models.Character, error) {
-	// TODO: make this do stuff.
-	return models.Character{}, nil
+func (cs *characterStore) GetCharacterByID(id primitive.ObjectID) (models.Character, error) {
+	var foundCharacter models.Character
+
+	filter := bson.M{"_id": id}
+	coll := cs.db.Database("goth-exam").Collection("characters")
+
+	err := coll.FindOne(context.TODO(), filter).Decode(&foundCharacter)
+	if err != nil {
+		return models.Character{}, fmt.Errorf("could not find character with id: %s. Reason: %v", id, err)
+	}
+	return foundCharacter, nil
+}
+
+func (cs *characterStore) DeleteCharacterById(id primitive.ObjectID) error {
+	filter := bson.M{"_id": id}
+	coll := cs.db.Database("goth-exam").Collection("characters")
+
+	_, err := coll.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return fmt.Errorf("could not find character with id: %s. Reason: %v", id, err)
+	}
+	return nil
 }
 
 func (cs *characterStore) GetCharacterByName(charName string) (models.Character, error) {

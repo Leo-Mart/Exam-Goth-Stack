@@ -5659,6 +5659,9 @@
   .justify-end {
     justify-content: flex-end;
   }
+  .justify-items-center {
+    justify-items: center;
+  }
   .gap-1 {
     gap: calc(var(--spacing) * 1);
   }
@@ -6488,6 +6491,9 @@
   }
   .text-center {
     text-align: center;
+  }
+  .text-left {
+    text-align: left;
   }
   .file-input-lg {
     --size: calc(var(--size-field, 0.25rem) * 12);

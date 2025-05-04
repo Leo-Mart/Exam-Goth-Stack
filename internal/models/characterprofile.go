@@ -14,6 +14,9 @@ type CharacterProfile struct {
 	Spec struct {
 		Name string `json:"name"`
 	} `json:"active_spec"`
+	Realm struct {
+		Name string `json:"name"`
+	} `json:"realm"`
 	Level              int `json:"level"`
 	ItemLevelEquipped  int `json:"equipped_item_level"`
 	KeystoneProfileURL struct {
