@@ -394,8 +394,8 @@ func (s *server) updateCharacterHandler(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	character.ID = primitive.ObjectID(oid)
 	w.WriteHeader(http.StatusOK)
-
 	characterDetailsTemplate := templates.CharacterDetails(character)
 	err = characterDetailsTemplate.Render(r.Context(), w)
 	if err != nil {

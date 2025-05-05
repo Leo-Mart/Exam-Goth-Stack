@@ -71,7 +71,7 @@ func footer() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<footer class=\"bg-white dark:bg-gray-900\"><div class=\"mx-auto max-w-screen-xl px-4 pb-6 pt-16 sm:px-6 lg:px-8 lg:pt-24\"><div class=\"mt-12 border-t border-gray-100 pt-6 dark:border-gray-800\"><div class=\"text-center sm:flex sm:justify-between sm:text-left\"><p class=\"text-sm text-gray-500 dark:text-gray-400\"><span class=\"block sm:inline\">All rights reserved.</span> <a class=\"inline-block text-emerald-600 underline transition hover:text-emerald-600/75 dark:text-emerald-500 dark:hover:text-emerald-500/75\" href=\"#\">Terms & Conditions</a> <span>&middot;</span> <a class=\"inline-block text-emerald-600 underline transition hover:text-emerald-600/75 dark:text-emerald-500 dark:hover:text-emerald-500/75\" href=\"#\">Privacy Policy</a></p></div></div></div></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<footer class=\"bg-white dark:bg-gray-900\"><div class=\"px-4 pb-6 pt-16 sm:px-6 lg:px-8 lg:pt-24\"><div class=\"divider divider-accent\"></div><div class=\"flex justify-between\"><div class=\"text-center sm:flex sm:justify-between sm:text-left\"><p class=\"text-sm text-gray-500 dark:text-gray-400\"><span class=\"block sm:inline\">All rights reserved.</span> <a class=\"inline-block text-gray-600 underline transition hover:text-emerald-600/75 dark:text-emerald-500 dark:hover:text-emerald-500/75\" href=\"#\">Terms & Conditions</a> <span>&middot;</span> <a class=\"inline-block text-gray-600 underline transition hover:text-emerald-600/75 dark:text-emerald-500 dark:hover:text-emerald-500/75\" href=\"#\">Privacy Policy</a></p></div><div><ul class=\"flex justify-center gap-6 sm:justify-start md:gap-8\"><li><a href=\"https://github.com/Leo-Mart/Exam-Goth-Stack\" rel=\"noreferrer\" target=\"_blank\" class=\"text-gray-500 transition hover:text-emerald-900 \">Github</a></li></ul></div></div></div></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -221,7 +221,7 @@ func Layout(contents templ.Component, title string, activeLink string) templ.Com
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<script>\r\n    function refreshWowheadLinks(evt) {\r\n      window.$WowheadPower.refreshLinks()\r\n    }\r\n\r\n  </script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -7,10 +7,13 @@
     'Noto Color Emoji';
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
+    --color-orange-500: oklch(70.5% 0.213 47.604);
+    --color-orange-600: oklch(64.6% 0.222 41.116);
     --color-emerald-500: oklch(69.6% 0.17 162.48);
     --color-emerald-600: oklch(59.6% 0.145 163.225);
     --color-emerald-700: oklch(50.8% 0.118 165.612);
     --color-emerald-800: oklch(43.2% 0.095 166.913);
+    --color-emerald-900: oklch(37.8% 0.077 168.94);
     --color-slate-700: oklch(37.2% 0.044 257.287);
     --color-gray-50: oklch(98.5% 0.002 247.839);
     --color-gray-100: oklch(96.7% 0.003 264.542);
@@ -4617,9 +4620,6 @@
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
   }
-  .mt-12 {
-    margin-top: calc(var(--spacing) * 12);
-  }
   .breadcrumbs {
     max-width: 100%;
     overflow-x: auto;
@@ -5653,6 +5653,9 @@
   .items-center {
     align-items: center;
   }
+  .justify-between {
+    justify-content: space-between;
+  }
   .justify-center {
     justify-content: center;
   }
@@ -5982,10 +5985,6 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
-  .border-t {
-    border-top-style: var(--tw-border-style);
-    border-top-width: 1px;
-  }
   .btn-dash {
     &:not( .btn-active, :hover, :active:focus, :focus-visible, :disabled, [disabled], .btn-disabled, :checked ) {
       --btn-shadow: "";
@@ -6062,9 +6061,6 @@
   }
   .border-emerald-700 {
     border-color: var(--color-emerald-700);
-  }
-  .border-gray-100 {
-    border-color: var(--color-gray-100);
   }
   .border-gray-200 {
     border-color: var(--color-gray-200);
@@ -6479,9 +6475,6 @@
     &::file-selector-button {
       font-size: 1.375rem;
     }
-  }
-  .pt-6 {
-    padding-top: calc(var(--spacing) * 6);
   }
   .pt-16 {
     padding-top: calc(var(--spacing) * 16);
@@ -6921,6 +6914,9 @@
   }
   .text-gray-900 {
     color: var(--color-gray-900);
+  }
+  .text-orange-600 {
+    color: var(--color-orange-600);
   }
   .text-white {
     color: var(--color-white);
@@ -7629,12 +7625,29 @@
       }
     }
   }
+  .hover\:text-emerald-900 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-emerald-900);
+      }
+    }
+  }
   .hover\:text-gray-600\/75 {
     &:hover {
       @media (hover: hover) {
         color: color-mix(in srgb, oklch(44.6% 0.03 256.802) 75%, transparent);
         @supports (color: color-mix(in lab, red, red)) {
           color: color-mix(in oklab, var(--color-gray-600) 75%, transparent);
+        }
+      }
+    }
+  }
+  .hover\:text-orange-600\/75 {
+    &:hover {
+      @media (hover: hover) {
+        color: color-mix(in srgb, oklch(64.6% 0.222 41.116) 75%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          color: color-mix(in oklab, var(--color-orange-600) 75%, transparent);
         }
       }
     }
@@ -7689,6 +7702,11 @@
   .sm\:justify-between {
     @media (width >= 40rem) {
       justify-content: space-between;
+    }
+  }
+  .sm\:justify-start {
+    @media (width >= 40rem) {
+      justify-content: flex-start;
     }
   }
   .sm\:self-end {
@@ -7752,6 +7770,11 @@
       justify-content: space-between;
     }
   }
+  .md\:gap-8 {
+    @media (width >= 48rem) {
+      gap: calc(var(--spacing) * 8);
+    }
+  }
   .md\:rounded-ss-\[60px\] {
     @media (width >= 48rem) {
       border-start-start-radius: 60px;
@@ -7793,11 +7816,6 @@
       border-color: var(--color-gray-700);
     }
   }
-  .dark\:border-gray-800 {
-    @media (prefers-color-scheme: dark) {
-      border-color: var(--color-gray-800);
-    }
-  }
   .dark\:bg-gray-800 {
     @media (prefers-color-scheme: dark) {
       background-color: var(--color-gray-800);
@@ -7823,6 +7841,11 @@
       color: var(--color-gray-400);
     }
   }
+  .dark\:text-orange-500 {
+    @media (prefers-color-scheme: dark) {
+      color: var(--color-orange-500);
+    }
+  }
   .dark\:text-white {
     @media (prefers-color-scheme: dark) {
       color: var(--color-white);
@@ -7844,6 +7867,18 @@
           color: color-mix(in srgb, oklch(69.6% 0.17 162.48) 75%, transparent);
           @supports (color: color-mix(in lab, red, red)) {
             color: color-mix(in oklab, var(--color-emerald-500) 75%, transparent);
+          }
+        }
+      }
+    }
+  }
+  .dark\:hover\:text-orange-500\/75 {
+    @media (prefers-color-scheme: dark) {
+      &:hover {
+        @media (hover: hover) {
+          color: color-mix(in srgb, oklch(70.5% 0.213 47.604) 75%, transparent);
+          @supports (color: color-mix(in lab, red, red)) {
+            color: color-mix(in oklab, var(--color-orange-500) 75%, transparent);
           }
         }
       }

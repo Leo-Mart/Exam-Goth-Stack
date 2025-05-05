@@ -40,11 +40,10 @@ func (cs *characterStore) UpdateCharacter(id primitive.ObjectID, character model
 	update := bson.M{"$set": bson.M{"characterprofile": character.CharacterProfile, "keystoneprofile": character.KeystoneProfile, "gear": character.Gear, "media": character.Media}}
 
 	coll := cs.db.Database("goth-exam").Collection("characters")
-	result, err := coll.UpdateOne(context.TODO(), filter, update)
+	_, err := coll.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		return fmt.Errorf("could not update character: %v", err)
 	}
-	fmt.Printf("Results of put: %v", result)
 	return nil
 }
 
