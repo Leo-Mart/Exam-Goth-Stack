@@ -15,7 +15,14 @@ type KeystoneProfile struct {
 			Duration        int  `json:"duration"`
 			KeystoneLevel   int  `json:"keystone_level"`
 			CompletedInTime bool `json:"is_completed_within_time"`
-			Rating          struct {
+			Affixes         []struct {
+				AffixName string `json:"name"`
+				AffixId   int    `json:"id"`
+			} `json:"keystone_affixes"`
+			Dungeon struct {
+				DungeonName string `json:"name"`
+			} `json:"dungeon"`
+			Rating struct {
 				Color struct {
 					R float64 `json:"r"`
 					G float64 `json:"g"`

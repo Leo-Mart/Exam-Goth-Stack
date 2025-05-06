@@ -7,6 +7,7 @@
     'Noto Color Emoji';
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
+    --color-red-500: oklch(63.7% 0.237 25.331);
     --color-orange-500: oklch(70.5% 0.213 47.604);
     --color-orange-600: oklch(64.6% 0.222 41.116);
     --color-emerald-500: oklch(69.6% 0.17 162.48);
@@ -3890,9 +3891,6 @@
   .col-span-2 {
     grid-column: span 2 / span 2;
   }
-  .col-span-3 {
-    grid-column: span 3 / span 3;
-  }
   .col-span-4 {
     grid-column: span 4 / span 4;
   }
@@ -6915,8 +6913,8 @@
   .text-gray-900 {
     color: var(--color-gray-900);
   }
-  .text-orange-600 {
-    color: var(--color-orange-600);
+  .text-red-500 {
+    color: var(--color-red-500);
   }
   .text-white {
     color: var(--color-white);
@@ -7642,16 +7640,6 @@
       }
     }
   }
-  .hover\:text-orange-600\/75 {
-    &:hover {
-      @media (hover: hover) {
-        color: color-mix(in srgb, oklch(64.6% 0.222 41.116) 75%, transparent);
-        @supports (color: color-mix(in lab, red, red)) {
-          color: color-mix(in oklab, var(--color-orange-600) 75%, transparent);
-        }
-      }
-    }
-  }
   .focus\:border-transparent {
     &:focus {
       border-color: transparent;
@@ -7841,11 +7829,6 @@
       color: var(--color-gray-400);
     }
   }
-  .dark\:text-orange-500 {
-    @media (prefers-color-scheme: dark) {
-      color: var(--color-orange-500);
-    }
-  }
   .dark\:text-white {
     @media (prefers-color-scheme: dark) {
       color: var(--color-white);
@@ -7867,18 +7850,6 @@
           color: color-mix(in srgb, oklch(69.6% 0.17 162.48) 75%, transparent);
           @supports (color: color-mix(in lab, red, red)) {
             color: color-mix(in oklab, var(--color-emerald-500) 75%, transparent);
-          }
-        }
-      }
-    }
-  }
-  .dark\:hover\:text-orange-500\/75 {
-    @media (prefers-color-scheme: dark) {
-      &:hover {
-        @media (hover: hover) {
-          color: color-mix(in srgb, oklch(70.5% 0.213 47.604) 75%, transparent);
-          @supports (color: color-mix(in lab, red, red)) {
-            color: color-mix(in oklab, var(--color-orange-500) 75%, transparent);
           }
         }
       }

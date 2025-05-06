@@ -121,7 +121,7 @@ func (s *server) importHomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) getKeystoneProfile(charProfile models.CharacterProfile, accessToken string) models.KeystoneProfile {
-	profileRequestURL := charProfile.KeystoneProfileURL.URL
+	profileRequestURL := fmt.Sprintf("%s&locale=en_GB", charProfile.KeystoneProfileURL.URL)
 	body := strings.NewReader("")
 
 	request, err := http.NewRequest(http.MethodGet, profileRequestURL, body)

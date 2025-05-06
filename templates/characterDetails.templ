@@ -19,6 +19,9 @@ templ CharacterDetails(character models.Character) {
           {character.CharacterProfile.Class.Name}
         </p>
       </div>
+      <button class="btn btn-accent" hx-put={ string(templ.URL(fmt.Sprintf("/update/%s",
+        primitive.ObjectID.Hex(character.ID))))} hx-target="#character-container" hx-swap="outerHTML">Update
+        character</button>
     </div>
   </section>
   <section class="col-span-4 row-span-4 rounded-md border border-emerald-700 p-2">
@@ -36,9 +39,6 @@ templ CharacterDetails(character models.Character) {
         </li>
         }
       </ul>
-      <button class="btn btn-accent" hx-put={ string(templ.URL(fmt.Sprintf("/update/%s",
-        primitive.ObjectID.Hex(character.ID))))} hx-target="#character-container" hx-swap="outerHTML">Update
-        character</button>
     </div>
   </section>
   <section class="col-start-1 col-span-6 rounded-md border border-emerald-700 p-2">
@@ -55,26 +55,41 @@ templ CharacterDetails(character models.Character) {
     <div>
       <h3 class="text-2xl text-gray-900 dark:text-white">Best runs for current season</h3>
       <div class="divider divider-accent"></div>
-      <ul>
-        for _, i := range character.KeystoneProfile.CurrentPeriod.BestRuns {
-        <li>
+      <table class="table table-zebra">
+        <!-- Head -->
+        <thead>
+          <tr>
+            <th>Dungeon</th>
+            <th>Level</th>
+            <th>Time</th>
+            <th>Score</th>
+            <th>Affixes</th>
+          </tr>
+        </thead>
+        <tbody>
+          for _, i := range character.KeystoneProfile.CurrentPeriod.BestRuns {
+          <tr>
 
-          {{ seconds := (i.Duration / 1000) % 60 }}
-          {{ minutes :=i.Duration / (1000 * 60)}}
-
-          <span>{ fmt.Sprintf("cleared in: %d:%d ", minutes, seconds) }</span>
-          <span>{ fmt.Sprintf("Level: +%d ", i.KeystoneLevel)}</span>
-          if i.CompletedInTime {
-
-          <span>{ fmt.Sprintf("Success!") }</span>
-          } else {
-
-          <span>{ fmt.Sprintf("failed") }</span>
+            {{ seconds := (i.Duration / 1000) % 60 }}
+            {{ minutes :=i.Duration / (1000 * 60)}}
+            <th>{ fmt.Sprintf("%s", i.Dungeon.DungeonName)}</th>
+            <th>{ fmt.Sprintf("%d", i.KeystoneLevel) }</th>
+            if i.CompletedInTime {
+            <th>{ fmt.Sprintf("%d:%d", minutes, seconds) }</th>
+            } else {
+            <th class="text-red-500">{ fmt.Sprintf("%d:%d", minutes, seconds) }</th>
+            }
+            <th>{ fmt.Sprintf("%.1f",i.Rating.Rating) }</th>
+            <th>
+              for _, j := range i.Affixes {
+              <a href={ templ.URL(fmt.Sprintf("https://www.wowhead.com/affix=%d", j.AffixId)) }><span class="hide">your
+                  mom</span></a>
+              }
+            </th>
+          </tr>
           }
-          <span>{ fmt.Sprintf("Aquired :%f points", i.Rating.Rating) }</span>
-        </li>
-        }
-      </ul>
+        </tbody>
+      </table>
     </div>
   </section>
 </div>
