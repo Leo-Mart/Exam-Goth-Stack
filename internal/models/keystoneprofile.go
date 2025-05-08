@@ -12,6 +12,7 @@ type KeystoneProfile struct {
 	} `json:"current_mythic_rating"`
 	CurrentPeriod struct {
 		BestRuns []struct {
+			CompletedAt     int  `json:"completed_timestamp"`
 			Duration        int  `json:"duration"`
 			KeystoneLevel   int  `json:"keystone_level"`
 			CompletedInTime bool `json:"is_completed_within_time"`
@@ -33,4 +34,36 @@ type KeystoneProfile struct {
 			} `json:"mythic_rating"`
 		} `json:"best_runs"`
 	} `json:"current_period"`
+	SeasonBestRuns SeasonBestMythicRuns
+	Seasons        []struct {
+		CurrentSeasonURL struct {
+			Url string `json:"href"`
+		} `json:"key"`
+		Id int `json:"id"`
+	} `json:"seasons"`
+}
+
+type SeasonBestMythicRuns struct {
+	SeasonRuns []struct {
+		CompletedAt     int  `json:"completed_timestamp"`
+		Duration        int  `json:"duration"`
+		KeystoneLevel   int  `json:"keystone_level"`
+		CompletedInTime bool `json:"is_completed_within_time"`
+		Affixes         []struct {
+			AffixName string `json:"name"`
+			AffixId   int    `json:"id"`
+		} `json:"keystone_affixes"`
+		Dungeon struct {
+			DungeonName string `json:"name"`
+		} `json:"dungeon"`
+		Rating struct {
+			Color struct {
+				R float64 `json:"r"`
+				G float64 `json:"g"`
+				B float64 `json:"b"`
+				A float64 `json:"a"`
+			} `json:"color"`
+			Rating float64 `json:"rating"`
+		} `json:"mythic_rating"`
+	} `json:"best_runs"`
 }

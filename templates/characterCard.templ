@@ -1,32 +1,38 @@
 package templates
 
 import (
-"github.com/Leo-Mart/goth-test/internal/models"
-"fmt"
+	"fmt"
+	"github.com/Leo-Mart/goth-test/internal/models"
 
-"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 templ CharacterCard(character models.Character) {
-// a card that takes a characters and shows some basic info, will also act as a link to get to a detail page.
-<article class="card w-48 bg-gray-900 shadow-lg border rounded-md border-emerald-700 mt-10">
-  // <a hx-get={ string(templ.URL(fmt.Sprintf("/character/%s", character.Name))) }>
-    <a href={ templ.URL(fmt.Sprintf("/%s", primitive.ObjectID.Hex(character.ID))) }>
-      <div class="card-body p-4">
-        <img class="self-center" alt="character portrait" src={character.Media.Assets[0].Value} />
-        <h2 class="card-title self-center">{character.CharacterProfile.Name}</h2>
-        <div class="divider mx-[-18px] my-0 border-color-emerald-400"></div>
-        <ul>
-          <li>Race: {character.CharacterProfile.Name}</li>
-          <li>Class: {character.CharacterProfile.Name}</li>
-          <li>Spec: {character.CharacterProfile.Name}</li>
-        </ul>
-      </div>
-    </a>
-    <button class="btn btn-error mx-1 my-1 " hx-delete={ string(templ.URL(fmt.Sprintf("/delete/%s",
-      primitive.ObjectID.Hex(character.ID))))} hx-confirm="Are you sure you want to delete this character?"
-      hx-swap="outerHTML swap:1s" hx-target={ fmt.Sprintf("#target-%s", primitive.ObjectID.Hex(character.ID)) }>Delete
-      character</button>
-</article>
-
+	// a card that takes a characters and shows some basic info, will also act as a link to get to a detail page.
+	<article class="card w-48 bg-gray-900 shadow-lg border rounded-md border-emerald-700 mt-10">
+		// <a hx-get={ string(templ.URL(fmt.Sprintf("/character/%s", character.Name))) }>
+		<a href={ templ.URL(fmt.Sprintf("/%s", primitive.ObjectID.Hex(character.ID))) }>
+			<div class="card-body p-4">
+				<img class="self-center" alt="character portrait" src={ character.Media.Assets[0].Value }/>
+				<h2 class="card-title self-center">{ character.CharacterProfile.Name }</h2>
+				<div class="divider mx-[-18px] my-0 border-color-emerald-400"></div>
+				<ul>
+					<li>{ character.CharacterProfile.Race.Name }</li>
+					<li>{ character.CharacterProfile.Class.Name }</li>
+					<li>{ character.CharacterProfile.Spec.Name }</li>
+				</ul>
+			</div>
+		</a>
+		<button
+			class="btn btn-error mx-1 my-1 "
+			hx-delete={ string(templ.URL(fmt.Sprintf("/delete/%s",
+      primitive.ObjectID.Hex(character.ID)))) }
+			hx-confirm="Are you sure you want to delete this character?"
+			hx-swap="outerHTML swap:1s"
+			hx-target={ fmt.Sprintf("#target-%s", primitive.ObjectID.Hex(character.ID)) }
+		>
+			Delete
+			character
+		</button>
+	</article>
 }

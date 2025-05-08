@@ -1,96 +1,172 @@
 package templates
 
 import (
-"fmt"
-"github.com/Leo-Mart/goth-test/internal/models"
-"go.mongodb.org/mongo-driver/bson/primitive"
+	"fmt"
+	"github.com/Leo-Mart/goth-test/internal/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
 templ CharacterDetails(character models.Character) {
-
-<div class="grid grid-cols-6 gap-1 bg-gray-900" id="character-container" hx-on::after-settle="refreshWowheadLinks()">
-  <section class="col-span-2 rounded-md border border-emerald-700 grid grid-cols-6 p-2">
-    <div class="flex">
-      <img class="shadow-md shadow-emerald-800 mx-2" src={ string(templ.URL(character.Media.Assets[0].Value)) } />
-      <div class="mx-2">
-        <h2 class="text-2xl text-gray-900 dark:text-white">{character.CharacterProfile.Name}</h2>
-        <p class="text-base">
-          {character.CharacterProfile.Race.Name}
-          {character.CharacterProfile.Spec.Name}
-          {character.CharacterProfile.Class.Name}
-        </p>
-      </div>
-      <button class="btn btn-accent" hx-put={ string(templ.URL(fmt.Sprintf("/update/%s",
-        primitive.ObjectID.Hex(character.ID))))} hx-target="#character-container" hx-swap="outerHTML">Update
-        character</button>
-    </div>
-  </section>
-  <section class="col-span-4 row-span-4 rounded-md border border-emerald-700 p-2">
-    <h2 class="text-2xl text-gray-900 dark:text-white">Eqipped Gear</h2>
-    <h3 class="text-1xl text-gray-900 dark:text-white">{ fmt.Sprintf( "Equipped Item level: %d",
-      character.CharacterProfile.ItemLevelEquipped)}
-    </h3>
-    <div class="divider divider-accent"></div>
-    <div>
-      <ul class="grid grid-cols-2">
-        for _, i := range character.Gear.EquippedItems {
-        <li>
-          {{ itemUrl := fmt.Sprintf("https://www.wowhead.com/item=%d", i.Item.ItemId)}}
-          <a href={ templ.URL(itemUrl)}></a>
-        </li>
-        }
-      </ul>
-    </div>
-  </section>
-  <section class="col-start-1 col-span-6 rounded-md border border-emerald-700 p-2">
-    <h2>Mythic+ Progression</h2>
-    <div>
-      <div>
-        <span>{{ fmt.Sprintf("Current rating: %d", character.KeystoneProfile.CurrentRating.Rating) }}</span>
-        <span>Totals runs: this many</span>
-        <span>Total in time: this many</span>
-        <span>Total bricked: too many</span>
-        <span>MOAR?!</span>
-      </div>
-    </div>
-    <div>
-      <h3 class="text-2xl text-gray-900 dark:text-white">Best runs for current season</h3>
-      <div class="divider divider-accent"></div>
-      <table class="table table-zebra">
-        <!-- Head -->
-        <thead>
-          <tr>
-            <th>Dungeon</th>
-            <th>Level</th>
-            <th>Time</th>
-            <th>Score</th>
-            <th>Affixes</th>
-          </tr>
-        </thead>
-        <tbody>
-          for _, i := range character.KeystoneProfile.CurrentPeriod.BestRuns {
-          <tr>
-
-            {{ seconds := (i.Duration / 1000) % 60 }}
-            {{ minutes :=i.Duration / (1000 * 60)}}
-            <th>{ fmt.Sprintf("%s", i.Dungeon.DungeonName)}</th>
-            <th>{ fmt.Sprintf("%d", i.KeystoneLevel) }</th>
-            if i.CompletedInTime {
-            <th>{ fmt.Sprintf("%d:%d", minutes, seconds) }</th>
-            } else {
-            <th class="text-red-500">{ fmt.Sprintf("%d:%d", minutes, seconds) }</th>
-            }
-            <th>{ fmt.Sprintf("%.1f",i.Rating.Rating) }</th>
-            <th>
-              for _, j := range i.Affixes {
-              <a href={ templ.URL(fmt.Sprintf("https://www.wowhead.com/affix=%d", j.AffixId)) }><span class="hide">your
-                  mom</span></a>
-              }
-            </th>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
-</div>
+	<div class="grid grid-cols-6 gap-1 bg-gray-900" id="character-container" hx-on::after-settle="refreshWowheadLinks()">
+		<section class="col-span-2 rounded-md border border-emerald-700 grid grid-cols-6 p-2">
+			<div class="flex">
+				<img class="shadow-md shadow-emerald-800 mx-2" src={ string(templ.URL(character.Media.Assets[0].Value)) }/>
+				<div class="mx-2">
+					<h2 class="text-2xl text-gray-900 dark:text-white">{ character.CharacterProfile.Name }</h2>
+					<p class="text-base">
+						{ character.CharacterProfile.Race.Name }
+						{ character.CharacterProfile.Spec.Name }
+						{ character.CharacterProfile.Class.Name }
+					</p>
+				</div>
+				<button
+					class="btn btn-accent"
+					hx-put={ string(templ.URL(fmt.Sprintf("/update/%s",
+        primitive.ObjectID.Hex(character.ID)))) }
+					hx-target="#character-container"
+					hx-swap="outerHTML"
+				>
+					Update
+					character
+				</button>
+			</div>
+		</section>
+		<section class="col-span-2 rounded-md border border-emerald-700 grid grid-cols-3 p-2">
+			<div>
+				for _, talents := range character.Specializations.Specializations[0].Loadouts[0].SelectedClassTalents {
+					<a
+						href={ templ.URL(fmt.Sprintf("https://www.wowhead.com/spell=%d", talents.Tooltip.SpellTooltip.Spell.Id)) }
+						data-wh-rename-link="false"
+						data-wh-icon-size="medium"
+					></a>
+				}
+			</div>
+			<div>
+				for _, talents := range character.Specializations.Specializations[0].Loadouts[0].SelectedHeroTalents {
+					<a
+						href={ templ.URL(fmt.Sprintf("https://www.wowhead.com/spell=%d", talents.Tooltip.SpellTooltip.Spell.Id)) }
+						data-wh-rename-link="false"
+						data-wh-icon-size="medium"
+					></a>
+				}
+			</div>
+			<div>
+				for _, talents := range character.Specializations.Specializations[0].Loadouts[0].SelectedSpecTalents {
+					<a
+						href={ templ.URL(fmt.Sprintf("https://www.wowhead.com/spell=%d", talents.Tooltip.SpellTooltip.Spell.Id)) }
+						data-wh-rename-link="false"
+						data-wh-icon-size="medium"
+					></a>
+				}
+			</div>
+		</section>
+		<section class="col-span-4 row-span-4 rounded-md border border-emerald-700 p-2">
+			<h2 class="text-2xl text-gray-900 dark:text-white">Eqipped Gear</h2>
+			<h3 class="text-1xl text-gray-900 dark:text-white">
+				{ fmt.Sprintf( "Equipped Item level: %d",
+      character.CharacterProfile.ItemLevelEquipped) }
+			</h3>
+			<div class="divider divider-accent"></div>
+			<div>
+				<ul class="grid grid-cols-2">
+					for _, i := range character.Gear.EquippedItems {
+						<li>
+							{{ itemUrl := fmt.Sprintf("https://www.wowhead.com/item=%d", i.Item.ItemId) }}
+							<a href={ templ.URL(itemUrl) }></a>
+						</li>
+					}
+				</ul>
+			</div>
+		</section>
+		<section class="col-start-1 col-span-6 rounded-md border border-emerald-700 p-2">
+			<h2>Mythic+ Progression</h2>
+			<div>
+				<div>
+					<span>{ fmt.Sprintf("Current rating: %.0f", character.KeystoneProfile.CurrentRating.Rating) }</span>
+				</div>
+			</div>
+			<div>
+				<h3 class="text-2xl text-gray-900 dark:text-white">Best Runs current week</h3>
+				<div class="divider divider-accent"></div>
+				if character.KeystoneProfile.CurrentPeriod.BestRuns != nil {
+					<table class="table table-zebra">
+						<thead>
+							<tr>
+								<th>Dungeon</th>
+								<th>Level</th>
+								<th>Time</th>
+								<th>Score</th>
+								<th>Affixes</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, i := range character.KeystoneProfile.CurrentPeriod.BestRuns {
+								<tr>
+									{{ seconds := (i.Duration / 1000) % 60 }}
+									{{ minutes := i.Duration / (1000 * 60) }}
+									<th>{ fmt.Sprintf("%s", i.Dungeon.DungeonName) }</th>
+									<th>{ fmt.Sprintf("%d", i.KeystoneLevel) }</th>
+									if i.CompletedInTime {
+										<th>{ fmt.Sprintf("%d:%02d", minutes, seconds) }</th>
+									} else {
+										<th class="text-red-500">{ fmt.Sprintf("%d:%02d", minutes, seconds) }</th>
+									}
+									<th>{ fmt.Sprintf("%.1f",i.Rating.Rating) }</th>
+									<th>
+										for _, j := range i.Affixes {
+											<a
+												href={ templ.URL(fmt.Sprintf("https://www.wowhead.com/affix=%d", j.AffixId)) }
+												data-wh-rename-link="false"
+											></a>
+										}
+									</th>
+								</tr>
+							}
+						</tbody>
+					</table>
+				} else {
+					<p>No runs for this week....yet!</p>
+				}
+			</div>
+			<div>
+				<h3 class="text-2xl text-gray-900 dark:text-white">Best Runs for TWW Season 2</h3>
+				<div class="divider divider-accent"></div>
+				<table class="table table-zebra">
+					<thead>
+						<tr>
+							<th>Dungeon</th>
+							<th>Level</th>
+							<th>Time</th>
+							<th>Score</th>
+							<th>Affixes</th>
+						</tr>
+					</thead>
+					<tbody>
+						for _, i := range character.KeystoneProfile.SeasonBestRuns.SeasonRuns {
+							<tr>
+								{{ seconds := (i.Duration / 1000) % 60 }}
+								{{ minutes := i.Duration / (1000 * 60) }}
+								<th>{ fmt.Sprintf("%s", i.Dungeon.DungeonName) }</th>
+								<th>{ fmt.Sprintf("%d", i.KeystoneLevel) }</th>
+								if i.CompletedInTime {
+									<th>{ fmt.Sprintf("%d:%02d", minutes, seconds) }</th>
+								} else {
+									<th class="text-red-500">{ fmt.Sprintf("%d:%02d", minutes, seconds) }</th>
+								}
+								<th>{ fmt.Sprintf("%.1f",i.Rating.Rating) }</th>
+								<th>
+									for _, j := range i.Affixes {
+										<a
+											href={ templ.URL(fmt.Sprintf("https://www.wowhead.com/affix=%d", j.AffixId)) }
+											data-wh-rename-link="false"
+										></a>
+									}
+								</th>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</section>
+	</div>
 }

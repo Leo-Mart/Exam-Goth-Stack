@@ -155,6 +155,77 @@ func (s *server) getKeystoneProfile(charProfile models.CharacterProfile, accessT
 	return keystoneProfile
 }
 
+func (s *server) getCurrentSeasonsMythicRuns(charProfile models.KeystoneProfile, accessToken string) models.SeasonBestMythicRuns {
+	currensSeasonURL := fmt.Sprintf("%s&locale=en_GB", charProfile.Seasons[0].CurrentSeasonURL.Url)
+	body := strings.NewReader("")
+
+	request, err := http.NewRequest(http.MethodGet, currensSeasonURL, body)
+	if err != nil {
+		s.logger.Printf("could not create request: %v", err)
+		return models.SeasonBestMythicRuns{}
+	}
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+
+	httpClient := new(http.Client)
+	resp, err := httpClient.Do(request)
+	if err != nil {
+		s.logger.Printf("could not make request: %v", err)
+		return models.SeasonBestMythicRuns{}
+	}
+
+	defer resp.Body.Close()
+
+	respData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		s.logger.Printf("could not read response bodt: %v", err)
+		return models.SeasonBestMythicRuns{}
+	}
+
+	var characterSeasonRuns models.SeasonBestMythicRuns
+	err = json.Unmarshal(respData, &characterSeasonRuns)
+	if err != nil {
+		s.logger.Printf("could not unmarshal season runs info: %v", err)
+		return models.SeasonBestMythicRuns{}
+	}
+
+	return characterSeasonRuns
+}
+
+func (s *server) getCharacterSpecialization(charProfile models.CharacterProfile, accessToken string) models.Specialization {
+	specURL := fmt.Sprintf("%s&locale=en_GB", charProfile.SpecializationsURL.URL)
+	body := strings.NewReader("")
+	request, err := http.NewRequest(http.MethodGet, specURL, body)
+	if err != nil {
+		s.logger.Printf("could not create request: %v", err)
+		return models.Specialization{}
+	}
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+
+	httpClient := new(http.Client)
+	resp, err := httpClient.Do(request)
+	if err != nil {
+		s.logger.Printf("could not make request: %v", err)
+		return models.Specialization{}
+	}
+
+	defer resp.Body.Close()
+
+	respData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		s.logger.Printf("could not read response body: %v", err)
+		return models.Specialization{}
+	}
+
+	var characterSpec models.Specialization
+	err = json.Unmarshal(respData, &characterSpec)
+	if err != nil {
+		s.logger.Printf("could not unmarshal json: %v", err)
+		return models.Specialization{}
+	}
+
+	return characterSpec
+}
+
 func (s *server) getGear(charProfile models.CharacterProfile, accessToken string) models.CharacterGear {
 	requestURL := fmt.Sprintf("%s&locale=en_GB", charProfile.EquipmentURL.URL)
 	body := strings.NewReader("")
@@ -202,11 +273,15 @@ func (s *server) addCharacterHandler(w http.ResponseWriter, r *http.Request) {
 	charProfile := s.getCharacterProfile(realm, name, accessToken)
 	characterGear := s.getGear(charProfile, accessToken)
 	keystoneProfile := s.getKeystoneProfile(charProfile, accessToken)
+	seasonBestRuns := s.getCurrentSeasonsMythicRuns(keystoneProfile, accessToken)
+	characterSpec := s.getCharacterSpecialization(charProfile, accessToken)
 	characterMedia := s.getCharacterMedia(charProfile, accessToken)
 
 	var character models.Character
 	character.CharacterProfile = charProfile
 	character.KeystoneProfile = keystoneProfile
+	character.KeystoneProfile.SeasonBestRuns = seasonBestRuns
+	character.Specializations = characterSpec
 	character.Gear = characterGear
 	character.Media = characterMedia
 
@@ -380,11 +455,15 @@ func (s *server) updateCharacterHandler(w http.ResponseWriter, r *http.Request) 
 	charProfile := s.getCharacterProfile(realm, name, accessToken)
 	characterGear := s.getGear(charProfile, accessToken)
 	keystoneProfile := s.getKeystoneProfile(charProfile, accessToken)
+	seasonBestRuns := s.getCurrentSeasonsMythicRuns(keystoneProfile, accessToken)
+	characterSpec := s.getCharacterSpecialization(charProfile, accessToken)
 	characterMedia := s.getCharacterMedia(charProfile, accessToken)
 
 	var character models.Character
 	character.CharacterProfile = charProfile
 	character.KeystoneProfile = keystoneProfile
+	character.KeystoneProfile.SeasonBestRuns = seasonBestRuns
+	character.Specializations = characterSpec
 	character.Gear = characterGear
 	character.Media = characterMedia
 

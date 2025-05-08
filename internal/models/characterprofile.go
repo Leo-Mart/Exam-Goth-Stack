@@ -25,6 +25,9 @@ type CharacterProfile struct {
 	EquipmentURL struct {
 		URL string `json:"href"`
 	} `json:"equipment"`
+	SpecializationsURL struct {
+		URL string `json:"href"`
+	} `json:"specializations"`
 	MediaURL struct {
 		URL string `json:"href"`
 	} `json:"media"`
