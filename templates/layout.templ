@@ -47,74 +47,134 @@ templ footer() {
 </footer>
 }
 
-templ nav(activeLink string) {
+templ nav(activeLink string, isLoggedIn bool) {
 <header class="bg-white dark:bg-gray-900 shadow">
   <div class="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-1 items-center justify-end md:justify-between">
-      <nav aria-label="Global" class="hidden md:block">
-        <ul class="flex items-center gap-6 text-sm">
-          <li>
-            if activeLink == "/" {
-            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
-              Home
-            </a>
-            } else {
-            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
-              href="/">
-              Home
-            </a>
-            }
-          </li>
-          <li>
-            if activeLink == "/import" {
-            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
-              Import new character
-            </a>
-            } else {
-            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
-              href="/import">
-              Import new character
-            </a>
-            }
-          </li>
-          <li>
-            if activeLink == "/characters" {
-            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
-              Imported Characters
-            </a>
-            } else {
-            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
-              href="/characters">
-              Imported Characters
-            </a>
-            }
-          </li>
-          <li>
-            if activeLink == "/about" {
-            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
-              About
-            </a>
-            } else {
-            <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
-              href="/about">
-              About
-            </a>
-            }
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <nav class="flex flex-1 items-center justify-between">
+      <ul class="flex items-center gap-6 text-sm">
+        <li>
+          if activeLink == "/" {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
+            Home
+          </a>
+          } else {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
+            href="/">
+            Home
+          </a>
+          }
+        </li>
+        <li>
+          if activeLink == "/import" {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
+            Import new character
+          </a>
+          } else {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
+            href="/import">
+            Import new character
+          </a>
+          }
+        </li>
+        <li>
+          if activeLink == "/characters" {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
+            Imported Characters
+          </a>
+          } else {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
+            href="/characters">
+            Imported Characters
+          </a>
+          }
+        </li>
+        <li>
+          if activeLink == "/about" {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
+            About
+          </a>
+          } else {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
+            href="/about">
+            About
+          </a>
+          }
+        </li>
+      </ul>
+      <ul class="flex items-center gap-6 text-sm">
+        if isLoggedIn {
+        <li>
+          if activeLink == "/userpage" {
+          <a id="sign-up-link" class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition"
+            href="/">
+            Userpage
+          </a>
+          } else {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
+            href="/userpage">
+            Userpage
+          </a>
+          }
+        </li>
+        } else {
+        <li>
+          if activeLink == "/sign-up" {
+          <a id="sign-up-link" class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition"
+            href="/">
+            Create Account
+          </a>
+          } else {
+          <a id="sign-up-link"
+            class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
+            href="/sign-up">
+            Create account
+          </a>
+          }
+        </li>
+        }
+        if isLoggedIn {
+        <li>
+          if activeLink == "/login" {
+          <a class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition" href="/">
+            Logout
+          </a>
+          } else {
+          <a id="login-link"
+            class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
+            href="/logout">
+            Logout
+          </a>
+          }
+        </li>
+        } else {
+        <li>
+          if activeLink == "/login" {
+          <a id="login-link" class="block rounded-md px-5 py-2.5 text-sm font-medium text-emerald-600 transition"
+            href="/">
+            Login
+          </a>
+          } else {
+          <a id="login-link"
+            class="block rounded-md px-5 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700 dark:hover:bg-emerald-500 dark:hover:text-white"
+            href="/login">
+            Login
+          </a>
+          }
+        </li>
+        }
+      </ul>
+    </nav>
   </div>
 </header>
 }
 
-templ Layout(contents templ.Component, title string, activeLink string) {
+templ Layout(contents templ.Component, title string, activeLink string, isLoggedIn bool) {
 <!DOCTYPE HTML>
 <html>
 @header(title)
 
 <body class="flex flex-col h-full bg-slate-700">
-  @nav(activeLink)
+  @nav(activeLink, isLoggedIn)
   <main class="flex-1 ">
     @contents
   </main>
@@ -123,7 +183,6 @@ templ Layout(contents templ.Component, title string, activeLink string) {
     function refreshWowheadLinks(evt) {
       window.$WowheadPower.refreshLinks()
     }
-
   </script>
 </body>
 

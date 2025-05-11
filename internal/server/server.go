@@ -12,8 +12,10 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/Leo-Mart/goth-test/internal/middleware"
 	"github.com/Leo-Mart/goth-test/internal/models"
 	"github.com/Leo-Mart/goth-test/templates"
+	"github.com/alexedwards/scs/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -26,24 +28,38 @@ type CharacterStore interface {
 	DeleteCharacterById(charId primitive.ObjectID) error
 }
 
+type UserStore interface {
+	GetUserByEmail(email string) (models.User, error)
+	Authenticate(email, testPassword string) (string, string, error)
+}
+
 type server struct {
 	logger      *log.Logger
 	port        int
 	httpServer  *http.Server
 	characterDb CharacterStore
+	userDb      UserStore
+	session     *scs.SessionManager
+	middleware  *middleware.Middleware
 }
 
-func NewServer(logger *log.Logger, port int, characterDb CharacterStore) (*server, error) {
+func NewServer(logger *log.Logger, port int, characterDb CharacterStore, userDb UserStore, session *scs.SessionManager, middleware *middleware.Middleware) (*server, error) {
 	if logger == nil {
 		return nil, fmt.Errorf("logger is required")
 	}
 	if characterDb == nil {
 		return nil, fmt.Errorf("characterDb is required")
 	}
+	if userDb == nil {
+		return nil, fmt.Errorf("userDb is required")
+	}
 	return &server{
 		logger:      logger,
 		port:        port,
 		characterDb: characterDb,
+		userDb:      userDb,
+		session:     session,
+		middleware:  middleware,
 	}, nil
 }
 
@@ -61,17 +77,22 @@ func (s *server) Start() error {
 	r.HandleFunc("GET /", s.homeHandler)
 	r.HandleFunc("GET /import", s.importPageHandler)
 	r.HandleFunc("GET /import-home", s.importHomeHandler)
+	r.HandleFunc("GET /login", s.loginPageHandler)
+	r.HandleFunc("GET /logout", s.logoutHandler)
 	r.HandleFunc("GET /about", s.aboutHandler)
 	r.HandleFunc("GET /characters", s.getCharactersHandler)
 	r.HandleFunc("GET /{id}", s.getCharacterDetailsHandler)
 	r.HandleFunc("PUT /update/{id}", s.updateCharacterHandler)
 	r.HandleFunc("POST /character/add", s.addCharacterHandler)
+	r.HandleFunc("POST /authenticate", s.loginHandler)
 	r.HandleFunc("DELETE /delete/{id}", s.deleteCharactersHandler)
+	//	r.HandleFunc("GET /userpage", s.Auth(s.userPageHandler))
+	r.HandleFunc("GET /userpage", s.userPageHandler)
 
 	// define server
 	s.httpServer = &http.Server{
 		Addr:    fmt.Sprintf(":%d", s.port),
-		Handler: r,
+		Handler: s.session.LoadAndSave(r),
 	}
 
 	// create a channel to listen for signals
@@ -96,7 +117,10 @@ func (s *server) Start() error {
 
 func (s *server) homeHandler(w http.ResponseWriter, r *http.Request) {
 	homeTemplate := templates.Home()
-	err := templates.Layout(homeTemplate, "WoW Tracker", "/").Render(r.Context(), w)
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err := templates.Layout(homeTemplate, "WoW Tracker", "/", isLoggedIn).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
 		return
@@ -105,7 +129,10 @@ func (s *server) homeHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) importPageHandler(w http.ResponseWriter, r *http.Request) {
 	newCharTemplate := templates.ImportNewCharacter()
-	err := templates.Layout(newCharTemplate, "Import new character", "/import").Render(r.Context(), w)
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err := templates.Layout(newCharTemplate, "Import new character", "/import", isLoggedIn).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
 		return
@@ -420,7 +447,10 @@ func (s *server) getCharactersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	characterListTemplate := templates.CharacterList(characters)
-	err = templates.Layout(characterListTemplate, "Imported Characters", "/characters").Render(r.Context(), w)
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err = templates.Layout(characterListTemplate, "Imported Characters", "/characters", isLoggedIn).Render(r.Context(), w)
 	if err != nil {
 		s.logger.Printf("Error when rendering character-list")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -516,7 +546,10 @@ func (s *server) getCharacterDetailsHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	characterDetailsTemplate := templates.CharacterDetails(character)
-	err = templates.Layout(characterDetailsTemplate, "Details page", "").Render(r.Context(), w)
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err = templates.Layout(characterDetailsTemplate, "Details page", "", isLoggedIn).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error rendering template", http.StatusInternalServerError)
 	}
@@ -524,8 +557,76 @@ func (s *server) getCharacterDetailsHandler(w http.ResponseWriter, r *http.Reque
 
 func (s *server) aboutHandler(w http.ResponseWriter, r *http.Request) {
 	aboutTemplate := templates.About()
-	err := templates.Layout(aboutTemplate, "About page", "/about").Render(r.Context(), w)
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err := templates.Layout(aboutTemplate, "About page", "/about", isLoggedIn).Render(r.Context(), w)
 	if err != nil {
 		http.Error(w, "Error when rendering template", http.StatusInternalServerError)
+	}
+}
+
+// loginPageHandler displays the login page
+func (s *server) loginPageHandler(w http.ResponseWriter, r *http.Request) {
+	loginTemplate := templates.Login()
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err := templates.Layout(loginTemplate, "Login Page", "/login", isLoggedIn).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error when rendering templates", http.StatusInternalServerError)
+	}
+}
+
+func (s *server) loginHandler(w http.ResponseWriter, r *http.Request) {
+	_ = s.session.RenewToken(r.Context())
+
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	id, _, err := s.userDb.Authenticate(email, password)
+	if err != nil {
+		s.logger.Printf("invalid login credentials")
+		return
+	}
+
+	s.session.Put(r.Context(), "user_id", id)
+	s.logger.Printf("user logged in successfully!")
+
+	homeTemplate := templates.Home()
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err = templates.Layout(homeTemplate, "WoW Tracker", "/", isLoggedIn).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *server) logoutHandler(w http.ResponseWriter, r *http.Request) {
+	_ = s.session.Destroy(r.Context())
+	_ = s.session.RenewToken(r.Context())
+
+	homeTemplate := templates.Home()
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err := templates.Layout(homeTemplate, "WoW Tracker", "/", isLoggedIn).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *server) userPageHandler(w http.ResponseWriter, r *http.Request) {
+	userPageTemplate := templates.Userpage()
+
+	isLoggedIn := s.session.Exists(r.Context(), "user_id")
+
+	err := templates.Layout(userPageTemplate, "User page", "/userpage", isLoggedIn).Render(r.Context(), w)
+	if err != nil {
+		http.Error(w, "error rendering template", http.StatusInternalServerError)
+		return
 	}
 }

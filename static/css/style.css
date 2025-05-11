@@ -4194,9 +4194,6 @@
     grid-column-start: 1;
     white-space: nowrap;
   }
-  .col-start-1 {
-    grid-column-start: 1;
-  }
   .col-start-2 {
     grid-column-start: 2;
   }
@@ -5639,14 +5636,11 @@
   .justify-center {
     justify-content: center;
   }
-  .justify-end {
-    justify-content: flex-end;
+  .justify-start {
+    justify-content: flex-start;
   }
   .justify-items-center {
     justify-items: center;
-  }
-  .gap-1 {
-    gap: calc(var(--spacing) * 1);
   }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
@@ -5669,6 +5663,9 @@
   }
   .self-center {
     align-self: center;
+  }
+  .self-start {
+    align-self: flex-start;
   }
   .overflow-hidden {
     overflow: hidden;
@@ -6140,6 +6137,9 @@
   }
   .bg-gray-900 {
     background-color: var(--color-gray-900);
+  }
+  .bg-red-500 {
+    background-color: var(--color-red-500);
   }
   .bg-slate-700 {
     background-color: var(--color-slate-700);
@@ -7706,11 +7706,6 @@
   .md\:h-\[calc\(100\%_-_4rem\)\] {
     @media (width >= 48rem) {
       height: calc(100% - 4rem);
-    }
-  }
-  .md\:justify-between {
-    @media (width >= 48rem) {
-      justify-content: space-between;
     }
   }
   .md\:gap-8 {
